@@ -1,0 +1,52 @@
+import { db } from "./db";
+import type { SyncQueueItem, Shift } from "@/types";
+
+const MAX_RETRIES = 3;
+
+export async function addToSyncQueue(
+  item: Omit<SyncQueueItem, "id" | "created_at" | "retries">
+) {
+  await db.sync_queue.add({
+    ...item,
+    id: crypto.randomUUID(),
+    created_at: new Date().toISOString(),
+    retries: 0,
+  });
+}
+
+export async function getPendingCount(): Promise<number> {
+  return db.sync_queue.count();
+}
+
+export async function flushSyncQueue(): Promise<void> {
+  if (typeof navigator !== "undefined" && !navigator.onLine) return;
+
+  const pending = await db.sync_queue
+    .orderBy("created_at")
+    .filter((item) => item.retries < MAX_RETRIES)
+    .toArray();
+
+  for (const item of pending) {
+    try {
+      const response = await fetch("/api/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(item),
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      await db.sync_queue.delete(item.id);
+      if (item.table === "shifts") {
+        await db.shifts.update((item.payload as Shift).id, { synced: true });
+      }
+    } catch {
+      await db.sync_queue.update(item.id, { retries: item.retries + 1 });
+    }
+  }
+}
+
+// Auto-flush when connection is restored
+if (typeof window !== "undefined") {
+  window.addEventListener("online", () => flushSyncQueue());
+}
