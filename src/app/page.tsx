@@ -176,7 +176,7 @@ function HomePage() {
             )}
           </div>
 
-          <footer className="text-xs text-gray-300">Yuta Staff Manager v1.0</footer>
+          <footer className="text-xs text-gray-300">Luna Staff Manager v1.0</footer>
         </main>
       </div>
     </div>

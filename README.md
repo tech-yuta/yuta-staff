@@ -1,6 +1,6 @@
-# Yuta Staff — Ứng dụng chấm công
+# Luna Staff — Ứng dụng chấm công
 
-Ứng dụng PWA chấm công (clock-in / clock-out) cho nhà hàng Yuta.  
+Ứng dụng PWA chấm công (clock-in / clock-out) cho nhà hàng Luna.  
 Dữ liệu được lưu cục bộ qua **IndexedDB (Dexie)** và đồng bộ lên **Google Sheets** ngay khi có kết nối internet.
 
 ---
@@ -75,7 +75,7 @@ GOOGLE_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE K
    *APIs & Services → Library → "Google Sheets API" → Enable*
 4. Tạo service account:  
    *APIs & Services → Credentials → Create Credentials → Service Account*
-   - Đặt tên (vd. `yuta-sheets-sync`)
+   - Đặt tên (vd. `luna-sheets-sync`)
    - Role: *Editor* (hoặc role tùy chỉnh với quyền `spreadsheets.values.read` và `spreadsheets.values.write`)
 5. Trong service account vừa tạo, vào tab **Keys**:  
    *Add Key → Create new key → JSON*  
@@ -85,7 +85,7 @@ GOOGLE_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE K
 
 1. Mở Google Sheet.
 2. Nhấn **Chia sẻ** (Share).
-3. Dán email của service account (vd. `yuta-sheets-sync@ten-project.iam.gserviceaccount.com`).
+3. Dán email của service account (vd. `luna-sheets-sync@ten-project.iam.gserviceaccount.com`).
 4. Cấp quyền **Người chỉnh sửa** (Editor).
 5. Xác nhận.
 

@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Yuta Staff",
-  description: "Gestion du personnel du restaurant Yuta",
+  title: "Luna Staff",
+  description: "Gestion du personnel du restaurant Luna",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Yuta Staff",
+    title: "Luna Staff",
   },
 };
 

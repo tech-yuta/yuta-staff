@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "yuta_activation_expires";
+const STORAGE_KEY = "luna_activation_expires";
 const DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 ngày
 
 function isActivated(): boolean {
@@ -64,7 +64,7 @@ export function ActivationGate({ children }: ActivationGateProps) {
     <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="bg-white rounded-3xl shadow-lg p-8 w-full max-w-xs text-center">
         <div className="text-5xl mb-4">🔐</div>
-        <h1 className="text-xl font-bold text-gray-900 mb-1">Yuta Staff</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-1">Luna Staff</h1>
         <p className="text-gray-400 text-sm mb-6">
           Entrez le code d&apos;activation pour accéder à l&apos;application
         </p>

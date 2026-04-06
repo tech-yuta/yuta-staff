@@ -1,7 +1,7 @@
 {
-  "name": "Yuta Staff Manager",
-  "short_name": "Yuta Staff",
-  "description": "Gestion du personnel du restaurant Yuta",
+  "name": "Luna Staff Manager",
+  "short_name": "Luna Staff",
+  "description": "Gestion du personnel du restaurant Luna",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f9fafb",
