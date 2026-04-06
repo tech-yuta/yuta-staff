@@ -162,8 +162,9 @@ function StaffTab() {
 
       await loadStaff();
       setSyncMsg({ ok: true, text: `✓ ${staff.length} employé(s) synchronisé(s)` });
-    } catch {
-      setSyncMsg({ ok: false, text: "✕ Erreur de synchronisation. Veuillez réessayer." });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setSyncMsg({ ok: false, text: `✕ Erreur: ${msg}` });
     } finally {
       setIsSyncing(false);
     }
