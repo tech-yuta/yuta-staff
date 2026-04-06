@@ -1,22 +1,30 @@
 import { google } from "googleapis";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import type { Shift, Staff } from "@/types";
 
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!;
 
+const TZ = process.env.APP_TIMEZONE ?? "Europe/Paris";
+
 // Timezone du serveur de déploiement peut différer — on force le formatage
-// en utilisant l'offset système. Pour forcer un TZ précis, définir la variable
-// d'environnement TZ=Europe/Paris sur le serveur / Vercel.
+// en Europe/Paris via Intl.DateTimeFormat, indépendamment du TZ du serveur.
 function toLocalStr(isoString: string): string {
   if (!isoString) return "";
-  return format(new Date(isoString), "dd/MM/yyyy HH:mm:ss", { locale: fr });
+  return new Intl.DateTimeFormat("fr-FR", {
+    timeZone: TZ,
+    day: "2-digit", month: "2-digit", year: "numeric",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hour12: false,
+  }).format(new Date(isoString));
 }
 
 function toLocalTime(isoString: string): string {
   if (!isoString) return "";
-  return format(new Date(isoString), "HH:mm", { locale: fr });
+  return new Intl.DateTimeFormat("fr-FR", {
+    timeZone: TZ,
+    hour: "2-digit", minute: "2-digit",
+    hour12: false,
+  }).format(new Date(isoString));
 }
 
 function getAuthClient() {

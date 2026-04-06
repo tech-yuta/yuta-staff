@@ -130,9 +130,12 @@ pnpm start
    - `GOOGLE_SHEET_ID`
    - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
    - `GOOGLE_PRIVATE_KEY`
+   - `TZ` = `Europe/Paris`
 4. Deploy. Ứng dụng sẽ chạy trên HTTPS — bắt buộc để cài đặt PWA.
 
 > **Lưu ý Vercel / GOOGLE_PRIVATE_KEY:** Dán key nguyên gốc vào field của Vercel (giữ nguyên ký tự xuống dòng thật). Vercel tự xử lý escape.
+
+> **Lưu ý Timezone:** Vercel chạy UTC theo mặc định. Nếu không đặt `TZ=Europe/Paris`, giờ lưu vào Google Sheets sẽ sai lệch 1–2 giờ so với giờ thực tế tại Pháp (tuỳ mùa hè/đông). Biến `TZ` phải được thêm trong *Settings → Environment Variables* trên Vercel.
 
 ---
 
