@@ -16,6 +16,7 @@ import {
   clockIn,
   clockOut,
 } from "@/lib/clockService";
+import { cleanupOldData } from "@/lib/syncQueue";
 import type { Staff, Shift, ClockAction } from "@/types";
 
 type PageState =
@@ -41,6 +42,11 @@ function HomePage() {
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Auto-purge old data silently on startup
+  useEffect(() => {
+    cleanupOldData();
   }, []);
 
   const handlePinSubmit = useCallback(async (pin: string) => {

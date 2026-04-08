@@ -2,6 +2,7 @@ import { db } from "./db";
 import type { SyncQueueItem, Shift } from "@/types";
 
 const MAX_RETRIES = 3;
+const SHIFT_RETENTION_DAYS = 90;
 
 export async function addToSyncQueue(
   item: Omit<SyncQueueItem, "id" | "created_at" | "retries">
@@ -49,4 +50,30 @@ export async function flushSyncQueue(): Promise<void> {
 // Auto-flush when connection is restored
 if (typeof window !== "undefined") {
   window.addEventListener("online", () => flushSyncQueue());
+}
+
+export async function cleanupOldData(): Promise<{
+  deletedShifts: number;
+  deletedQueueItems: number;
+}> {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - SHIFT_RETENTION_DAYS);
+  const cutoffDate = cutoff.toISOString().slice(0, 10); // "yyyy-MM-dd"
+
+  // Delete synced shifts older than SHIFT_RETENTION_DAYS
+  const oldShiftKeys = await db.shifts
+    .filter((s) => s.synced && s.date < cutoffDate)
+    .primaryKeys();
+  await db.shifts.bulkDelete(oldShiftKeys);
+
+  // Delete dead sync_queue items that have permanently failed
+  const deadItemKeys = await db.sync_queue
+    .filter((item) => item.retries >= MAX_RETRIES)
+    .primaryKeys();
+  await db.sync_queue.bulkDelete(deadItemKeys);
+
+  return {
+    deletedShifts: oldShiftKeys.length,
+    deletedQueueItems: deadItemKeys.length,
+  };
 }

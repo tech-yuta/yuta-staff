@@ -8,7 +8,7 @@ import { db } from "@/lib/db";
 import { getShiftsByDate } from "@/lib/clockService";
 import { ShiftTable } from "@/components/ShiftTable";
 import { SyncIndicator } from "@/components/SyncIndicator";
-import { flushSyncQueue } from "@/lib/syncQueue";
+import { flushSyncQueue, cleanupOldData } from "@/lib/syncQueue";
 import { ActivationGate } from "@/components/ActivationGate";
 import type { Shift, Staff } from "@/types";
 
@@ -137,6 +137,8 @@ function StaffTab() {
   const [staffList, setStaffList] = useState<Staff[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [isCleaning, setIsCleaning] = useState(false);
+  const [cleanMsg, setCleanMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   const loadStaff = useCallback(async () => {
     const list = await db.staff.filter((s) => s.active).toArray();
@@ -170,6 +172,23 @@ function StaffTab() {
     }
   }
 
+  async function handleCleanup() {
+    setIsCleaning(true);
+    setCleanMsg(null);
+    try {
+      const { deletedShifts, deletedQueueItems } = await cleanupOldData();
+      setCleanMsg({
+        ok: true,
+        text: `✓ Nettoyage: ${deletedShifts} horaire(s) + ${deletedQueueItems} entrée(s) queue supprimé(s)`,
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setCleanMsg({ ok: false, text: `✕ Erreur: ${msg}` });
+    } finally {
+      setIsCleaning(false);
+    }
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -192,6 +211,26 @@ function StaffTab() {
           }`}
         >
           {syncMsg.text}
+        </p>
+      )}
+
+      {/* Maintenance */}
+      <div className="flex items-center gap-3 mb-4">
+        <button
+          onClick={handleCleanup}
+          disabled={isCleaning}
+          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 disabled:opacity-50 transition-colors"
+        >
+          {isCleaning ? "Nettoyage..." : "🗑 Purger données anciennes (>90j)"}
+        </button>
+      </div>
+      {cleanMsg && (
+        <p
+          className={`text-sm mb-4 px-3 py-2 rounded-xl ${
+            cleanMsg.ok ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
+          }`}
+        >
+          {cleanMsg.text}
         </p>
       )}
 
